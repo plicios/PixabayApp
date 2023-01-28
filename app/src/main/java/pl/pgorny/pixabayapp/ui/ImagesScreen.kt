@@ -13,16 +13,20 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
-import pl.pgorny.pixabayapp.data.Image
+import pl.pgorny.pixabayapp.model.Image
 
 @Preview
 @Composable
 fun ImagesScreen(
-    imagesViewModel: ImagesViewModel = viewModel()
+    imagesViewModel: ImagesViewModel = viewModel(factory = ImagesViewModel.Factory())
 ) {
+    val imagesState by imagesViewModel.uiState.collectAsState()
     Column(Modifier.padding(10.dp)) {
         SearchBar {}
-        ImagesList(imagesViewModel = imagesViewModel)
+        when(imagesState) {
+            is ImagesUiState.HasImages -> ImagesList(imagesState as ImagesUiState.HasImages)
+            is ImagesUiState.NoImages -> Text(text = "No data")
+        }
     }
 }
 
@@ -79,9 +83,7 @@ fun SearchBar(onSearchQueryChanged: (String) -> Unit) {
 //}
 
 @Composable
-fun ImagesList(imagesViewModel: ImagesViewModel) {
-
-    val imagesState by imagesViewModel.uiState.collectAsState()
+fun ImagesList(imagesState: ImagesUiState.HasImages) {
     Images(images = imagesState.images)
 }
 

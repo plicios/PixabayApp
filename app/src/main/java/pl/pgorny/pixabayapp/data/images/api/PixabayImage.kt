@@ -1,6 +1,6 @@
-package pl.pgorny.pixabayapp.data
+package pl.pgorny.pixabayapp.data.images.api
 
-data class ImageDto(
+data class PixabayImage(
     val largeImageURL: String,
     val previewURL: String,
     val tags: String,
