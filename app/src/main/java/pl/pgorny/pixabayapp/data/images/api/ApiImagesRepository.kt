@@ -15,8 +15,7 @@ class ApiImagesRepository : ImagesRepository {
 
     override suspend fun getImages(searchQuery: String) =
         try{
-            Timber.d("Try getting images for query=$searchQuery")
-            Result.Success(pixabayService.getImages(searchQuery).hits.map { Image(it) })
+            Result.Success(pixabayService.getImages(searchQuery.replace(" ", "+")).hits.map { Image(it) })
         } catch (e: Exception) {
             Timber.e(e)
             Result.Error(e)

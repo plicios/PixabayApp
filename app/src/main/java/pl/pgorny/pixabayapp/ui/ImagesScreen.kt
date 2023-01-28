@@ -6,6 +6,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
@@ -34,7 +35,7 @@ fun ImagesScreen(
 ) {
     val imagesState by imagesViewModel.uiState.collectAsState()
     Column(Modifier.padding(10.dp)) {
-        SearchBar(searchText = imagesState.searchInput) { value -> imagesViewModel.onSearchInputChanged(value) }
+        SearchBar(searchText = imagesState.searchInput, onSearchAction = imagesViewModel::refreshImages, onSearchQueryChanged = imagesViewModel::onSearchInputChanged)
         when(imagesState) {
             is ImagesUiState.HasImages -> ImagesList(imagesState as ImagesUiState.HasImages)
             is ImagesUiState.NoImages -> Text(text = "No data")
@@ -44,12 +45,21 @@ fun ImagesScreen(
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalComposeUiApi::class)
 @Composable
-fun SearchBar(searchText: String = "", onSearchQueryChanged: (String) -> Unit) {
+fun SearchBar(
+    searchText: String = "",
+    onSearchQueryChanged: (String) -> Unit = {},
+    onSearchAction: () -> Unit = {},
+    onClearClick: () -> Unit = {
+        onSearchQueryChanged("")
+        onSearchAction()
+    }
+) {
     val focusManager = LocalFocusManager.current
     val keyboardController = LocalSoftwareKeyboardController.current
     OutlinedTextField(
         modifier = Modifier.fillMaxWidth().interceptKey(Key.Enter) {
 //            onSearchQueryChanged("getValueFromComposeView")
+            onSearchAction()
             keyboardController?.hide()
             focusManager.clearFocus(force = true)
         },
@@ -57,6 +67,14 @@ fun SearchBar(searchText: String = "", onSearchQueryChanged: (String) -> Unit) {
         onValueChange = onSearchQueryChanged,
         placeholder = { Text(stringResource(R.string.search_images_placeholder)) },
         leadingIcon = { Icon(Icons.Filled.Search, null) },
+        trailingIcon = {
+            IconButton(onClick = { onClearClick() }) {
+                Icon(
+                    imageVector = Icons.Filled.Close,
+                    contentDescription = "clear"//stringResource(id = R.string.icn_search_clear_content_description)
+                )
+            }
+        },
         singleLine = true,
         // keyboardOptions change the newline key to a search key on the soft keyboard
         keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
@@ -64,6 +82,7 @@ fun SearchBar(searchText: String = "", onSearchQueryChanged: (String) -> Unit) {
         keyboardActions = KeyboardActions(
             onSearch = {
 //                onSearchQueryChanged("getValueFromComposeView")
+                onSearchAction()
                 keyboardController?.hide()
             }
         )
