@@ -8,10 +8,12 @@ import kotlinx.coroutines.launch
 import pl.pgorny.pixabayapp.data.images.ImagesRepository
 import pl.pgorny.pixabayapp.data.images.MockImagesRepository
 import pl.pgorny.pixabayapp.data.Result
+import pl.pgorny.pixabayapp.data.images.api.ApiImagesRepository
+import timber.log.Timber
 import java.util.*
 
 class ImagesViewModel(private val imagesRepository: ImagesRepository) : ViewModel() {
-    private val viewModelState = MutableStateFlow(ImagesViewModelState())
+    private val viewModelState = MutableStateFlow(ImagesViewModelState(searchInput = "fruits"))
     val uiState: StateFlow<ImagesUiState> = viewModelState.map { it.toUiState() }.stateIn(
         viewModelScope,
         SharingStarted.Eagerly,
@@ -27,7 +29,9 @@ class ImagesViewModel(private val imagesRepository: ImagesRepository) : ViewMode
 
         viewModelScope.launch {
             viewModelState.update {
+                Timber.d("check")
                 val result = imagesRepository.getImages(it.searchInput)
+                Timber.d(result.toString())
                 when (result) {
                     is Result.Success -> it.copy(images = result.data, isLoading = false)
                     is Result.Error -> {
@@ -46,7 +50,7 @@ class ImagesViewModel(private val imagesRepository: ImagesRepository) : ViewMode
     }
 
     class Factory(
-        private val imagesRepository: ImagesRepository = MockImagesRepository()
+        private val imagesRepository: ImagesRepository = ApiImagesRepository()
     ) : ViewModelProvider.Factory {
         @Suppress("UNCHECKED_CAST")
         override fun <T : ViewModel> create(modelClass: Class<T>): T {
