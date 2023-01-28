@@ -1,4 +1,4 @@
-package pl.pgorny.pixabayapp
+package pl.pgorny.pixabayapp.data
 
 data class ImageDto(
     val largeImageURL: String,

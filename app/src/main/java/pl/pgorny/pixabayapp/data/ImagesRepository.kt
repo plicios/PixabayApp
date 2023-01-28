@@ -1,4 +1,4 @@
-package pl.pgorny.pixabayapp
+package pl.pgorny.pixabayapp.data
 
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory

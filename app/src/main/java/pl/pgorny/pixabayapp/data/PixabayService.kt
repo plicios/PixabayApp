@@ -1,5 +1,6 @@
-package pl.pgorny.pixabayapp
+package pl.pgorny.pixabayapp.data
 
+import pl.pgorny.pixabayapp.Result
 import retrofit2.http.GET
 import retrofit2.http.Query
 
