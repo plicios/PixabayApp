@@ -18,6 +18,6 @@ class ApiImagesRepository : ImagesRepository {
             Result.Success(pixabayService.getImages(searchQuery.replace(" ", "+")).hits.map { Image(it) })
         } catch (e: Exception) {
             Timber.e(e)
-            Result.Error(e)
+            Result.Error(e.message ?: "")
         }
 }

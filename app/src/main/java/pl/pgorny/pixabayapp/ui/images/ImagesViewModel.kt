@@ -25,18 +25,14 @@ class ImagesViewModel(private val imagesRepository: ImagesRepository) : ViewMode
     }
 
     fun refreshImages() {
-        viewModelState.update { it.copy(isLoading = true) }
-
         viewModelScope.launch {
             viewModelState.update {
                 val result = imagesRepository.getImages(it.searchInput)
                 Timber.d(result.toString())
                 when (result) {
-                    is Result.Success -> it.copy(images = result.data, isLoading = false)
-                    is Result.Error -> {
-                        val errorMessages = it.errorMessages + (result.exception.message ?: "")
-                        it.copy(images = null, errorMessages = errorMessages, isLoading = false)
-                    }
+                    is Result.Success -> it.copy(images = result.data, errorMessage = "")
+                    is Result.SuccessWithErrorMessage -> it.copy(images = result.data, errorMessage = result.message)
+                    is Result.Error -> it.copy(images = null, errorMessage = result.message)
                 }
             }
         }

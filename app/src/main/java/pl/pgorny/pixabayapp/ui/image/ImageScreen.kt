@@ -22,15 +22,15 @@ fun ImageScreen(image: Image, onImageClosed: () -> Unit) {
         onImageClosed()
     }
     Column {
-        AsyncImage(
-            model = image.largeImageURL,
-            contentDescription = ""
-        )
         LabelWithValue(resourceId = R.string.author_user_name, value = image.user)
         LabelWithValue(resourceId = R.string.image_tags, value = image.tags.joinToString())
         LabelWithValue(resourceId = R.string.image_likes, value = image.likes.toString())
         LabelWithValue(resourceId = R.string.image_downloads, value = image.downloads.toString())
         LabelWithValue(resourceId = R.string.image_comments, value = image.comments.toString())
+        AsyncImage(
+            model = image.largeImageURL,
+            contentDescription = ""
+        )
     }
 }
 

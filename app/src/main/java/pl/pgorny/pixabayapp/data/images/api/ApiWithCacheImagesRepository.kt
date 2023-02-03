@@ -41,9 +41,9 @@ class ApiWithCacheImagesRepository(applicationContext: Context) : ImagesReposito
             Timber.e(e)
             val images = getImagesFromCache(searchQuery)
             if(images != null){
-                Result.Success(images)
+                Result.SuccessWithErrorMessage(images, "Data from local cache")
             } else {
-                Result.Error(e)
+                Result.Error("Error connecting to internet resources, check Your internet connection")
             }
         }
 }

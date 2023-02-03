@@ -22,6 +22,7 @@ import coil.compose.AsyncImage
 import pl.pgorny.pixabayapp.R
 import pl.pgorny.pixabayapp.model.Image
 import pl.pgorny.pixabayapp.ui.BodyText
+import pl.pgorny.pixabayapp.ui.ErrorText
 import pl.pgorny.pixabayapp.ui.image.ImageScreen
 import pl.pgorny.pixabayapp.ui.search.SearchBar
 
@@ -49,12 +50,18 @@ fun ImagesScreen(
 ) {
     Column(Modifier.padding(10.dp)) {
         when(imagesUiState) {
+            is ImagesUiState.ShowImage -> {}
+            is ImagesUiState.ShowDialog -> {}
+            else -> SearchBar(searchText = imagesUiState.searchInput, onSearchAction = onSearchAction, onSearchQueryChanged = onSearchQueryChanged)
+        }
+        if(imagesUiState.errorMessage.isNotEmpty()){
+            ErrorText(text = imagesUiState.errorMessage)
+        }
+        when(imagesUiState) {
             is ImagesUiState.HasImages -> {
-                SearchBar(searchText = imagesUiState.searchInput, onSearchAction = onSearchAction, onSearchQueryChanged = onSearchQueryChanged)
                 ImagesList(images = imagesUiState.images, onImageSelected = onImageSelected)
             }
             is ImagesUiState.NoImages -> {
-                SearchBar(searchText = imagesUiState.searchInput, onSearchAction = onSearchAction, onSearchQueryChanged = onSearchQueryChanged)
                 BodyText(text = stringResource(id = R.string.no_data))
             }
             is ImagesUiState.ShowImage -> ImageScreen(image = imagesUiState.image, onImageClosed = onImageClosed)
@@ -103,7 +110,9 @@ fun ImagesList(images: List<Image>, onImageSelected: (Image) -> Unit) {
 
 @Composable
 fun ImageCard(image: Image, onImageSelected: (Image) -> Unit) {
-    Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.padding(vertical = 5.dp).clickable { onImageSelected(image) }) {
+    Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier
+        .padding(vertical = 5.dp)
+        .clickable { onImageSelected(image) }) {
         AsyncImage(
             modifier = Modifier.size(75.dp, 75.dp),
             model = image.previewURL,
