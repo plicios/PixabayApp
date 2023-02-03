@@ -3,6 +3,7 @@ package pl.pgorny.pixabayapp.ui.images
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import pl.pgorny.pixabayapp.data.images.ImagesRepository
@@ -11,8 +12,10 @@ import pl.pgorny.pixabayapp.data.images.api.ApiImagesRepository
 import pl.pgorny.pixabayapp.model.Image
 import timber.log.Timber
 import java.util.*
+import javax.inject.Inject
 
-class ImagesViewModel(private val imagesRepository: ImagesRepository) : ViewModel() {
+@HiltViewModel
+class ImagesViewModel @Inject constructor(private val imagesRepository: ImagesRepository) : ViewModel() {
     private val viewModelState = MutableStateFlow(ImagesViewModelState(searchInput = "fruits"))
     val uiState: StateFlow<ImagesUiState> = viewModelState.map { it.toUiState() }.stateIn(
         viewModelScope,
@@ -54,14 +57,5 @@ class ImagesViewModel(private val imagesRepository: ImagesRepository) : ViewMode
 
     fun onImageClosed() {
         viewModelState.update { it.copy(showSelectedImage = false, selectedImage = null) }
-    }
-
-    class Factory(
-        private val imagesRepository: ImagesRepository = ApiImagesRepository()
-    ) : ViewModelProvider.Factory {
-        @Suppress("UNCHECKED_CAST")
-        override fun <T : ViewModel> create(modelClass: Class<T>): T {
-            return ImagesViewModel(imagesRepository) as T
-        }
     }
 }

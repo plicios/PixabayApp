@@ -7,12 +7,7 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import timber.log.Timber
 
-class ApiImagesRepository : ImagesRepository {
-    private val pixabayService = Retrofit.Builder().baseUrl("https://pixabay.com/api/")//TODO extract baseUrl
-        .addConverterFactory(GsonConverterFactory.create())
-        .build()
-        .create(PixabayService::class.java)
-
+class ApiImagesRepository(private val pixabayService: PixabayService) : ImagesRepository {
     override suspend fun getImages(searchQuery: String) =
         try{
             Result.Success(pixabayService.getImages(searchQuery.replace(" ", "+")).hits.map { Image(it) })

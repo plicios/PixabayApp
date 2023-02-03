@@ -10,17 +10,7 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import timber.log.Timber
 
-class ApiWithCacheImagesRepository(applicationContext: Context) : ImagesRepository {
-    private val pixabayService = Retrofit.Builder().baseUrl("https://pixabay.com/api/")//TODO extract baseUrl
-        .addConverterFactory(GsonConverterFactory.create())
-        .build()
-        .create(PixabayService::class.java)
-    private val pixabayDatabase = Room.databaseBuilder(
-        applicationContext,
-        PixabayDatabase::class.java, "PixabayDatabase"
-    ).build()
-
-
+class ApiWithCacheImagesRepository(private val pixabayDatabase: PixabayDatabase, private val pixabayService: PixabayService) : ImagesRepository {
     private suspend fun cacheImages(images: List<Image>, searchQuery: String) {
         pixabayDatabase.imageDao().insertAll(*images.map { pl.pgorny.pixabayapp.data.storage.Image(it, searchQuery) }.toTypedArray())
     }
