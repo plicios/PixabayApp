@@ -2,4 +2,17 @@
     <string name="app_name">PixabayApp</string>
     
     <string name="search_images_placeholder">Search images</string>
+
+    <string name="author_user_name">Author username:</string>
+    <string name="image_tags">Tags:</string>
+    <string name="image_likes">Likes:</string>
+    <string name="image_downloads">Downloads:</string>
+    <string name="image_comments">Comments:</string>
+
+    <string name="no_data">No data available</string>
+    <string name="search_clear_search_query">Clear search query</string>
+
+    <string name="more_details_dialog_title">Do You want to see more details?</string>
+    <string name="more_details_dialog_confirm_button">Yes</string>
+    <string name="more_details_dialog_dismiss_button">No</string>
 </resources>

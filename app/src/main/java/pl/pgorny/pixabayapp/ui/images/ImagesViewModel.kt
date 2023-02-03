@@ -1,4 +1,4 @@
-package pl.pgorny.pixabayapp.ui
+package pl.pgorny.pixabayapp.ui.images
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
@@ -6,9 +6,9 @@ import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import pl.pgorny.pixabayapp.data.images.ImagesRepository
-import pl.pgorny.pixabayapp.data.images.MockImagesRepository
 import pl.pgorny.pixabayapp.data.Result
 import pl.pgorny.pixabayapp.data.images.api.ApiImagesRepository
+import pl.pgorny.pixabayapp.model.Image
 import timber.log.Timber
 import java.util.*
 
@@ -29,14 +29,13 @@ class ImagesViewModel(private val imagesRepository: ImagesRepository) : ViewMode
 
         viewModelScope.launch {
             viewModelState.update {
-                Timber.d("check")
                 val result = imagesRepository.getImages(it.searchInput)
                 Timber.d(result.toString())
                 when (result) {
                     is Result.Success -> it.copy(images = result.data, isLoading = false)
                     is Result.Error -> {
                         val errorMessages = it.errorMessages + (result.exception.message ?: "")
-                        it.copy(errorMessages = errorMessages, isLoading = false)
+                        it.copy(images = null, errorMessages = errorMessages, isLoading = false)
                     }
                 }
             }
@@ -47,6 +46,18 @@ class ImagesViewModel(private val imagesRepository: ImagesRepository) : ViewMode
         viewModelState.update {
             it.copy(searchInput = searchInput)
         }
+    }
+
+    fun onImageSelected(image: Image) {
+        viewModelState.update { it.copy(selectedImage = image) }
+    }
+
+    fun showSelectedImage() {
+        viewModelState.update { it.copy(showSelectedImage = true) }
+    }
+
+    fun onImageClosed() {
+        viewModelState.update { it.copy(showSelectedImage = false, selectedImage = null) }
     }
 
     class Factory(
